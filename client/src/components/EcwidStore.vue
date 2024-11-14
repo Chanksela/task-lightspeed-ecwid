@@ -32,7 +32,12 @@
 		ecwidBrowserScript.setAttribute("charset", "utf-8");
 		ecwidBrowserScript.text = `xProductBrowser("categoriesPerRow=3","views=grid(20,3) list(60) table(60)","categoryView=grid","searchView=list","id=my-store-${storeId}");`;
 		document.head.appendChild(ecwidBrowserScript);
+		window.Ecwid.OnPageLoaded.add(function (page) {
+			console.log(window.Ecwid);
+			console.log(page.type);
+		});
 	};
+
 	onMounted(() => {
 		injectEcwidScript(props.storeId);
 	});
