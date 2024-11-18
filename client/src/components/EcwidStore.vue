@@ -33,13 +33,23 @@
 		ecwidBrowserScript.setAttribute("charset", "utf-8");
 		ecwidBrowserScript.text = `xProductBrowser("categoriesPerRow=3","views=grid(20,3) list(60) table(60)","categoryView=grid","searchView=list","id=my-store-${storeId}");`;
 		document.head.appendChild(ecwidBrowserScript);
-		Ecwid.OnAPILoaded.add(function () {
-			console.log("Ecwid storefront JS API has loaded");
-		});
+
 		Ecwid.OnPageLoaded.add(function (page) {
-			console.log("Ecwid object: ", Ecwid);
-			console.log("page: ", page);
-			console.log(page.type);
+			// Ecwid.openPage("products");
+			console.log("page loaded");
+			console.log(document.querySelector(".ec-footer"));
+			console.log(typeof localStorage.getItem("show_widget"));
+			if (page.type === "CART") {
+				const footerElement = document.querySelector(".ec-footer");
+				const newElement = document.createElement("div");
+				newElement.textContent = "Custom Widget";
+				if (
+					footerElement !== null &&
+					localStorage.getItem("show_widget") === "true"
+				) {
+					footerElement.parentNode.insertBefore(newElement, footerElement);
+				}
+			}
 		});
 	};
 
