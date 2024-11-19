@@ -1,5 +1,6 @@
 <script setup lang="ts">
-	import { onMounted } from "vue";
+	import { createApp, onMounted } from "vue";
+	import ProductsWidget from "./ProductsWidget.vue";
 
 	const props = defineProps({
 		storeId: {
@@ -7,7 +8,6 @@
 			default: 101560752,
 		},
 	});
-
 	const injectEcwidScript = (storeId: number) => {
 		window.ec = window.ec || {};
 		window.ec.config = window.ec.config || {};
@@ -35,20 +35,27 @@
 		document.head.appendChild(ecwidBrowserScript);
 
 		Ecwid.OnPageLoaded.add(function (page) {
-			// Ecwid.openPage("products");
 			console.log("page loaded");
-			console.log(document.querySelector(".ec-footer"));
-			console.log(typeof localStorage.getItem("show_widget"));
+			// Checking if page is CART
 			if (page.type === "CART") {
-				const footerElement = document.querySelector(".ec-footer");
-				const newElement = document.createElement("div");
-				newElement.textContent = "Custom Widget";
-				if (
-					footerElement !== null &&
-					localStorage.getItem("show_widget") === "true"
-				) {
-					footerElement.parentNode.insertBefore(newElement, footerElement);
-				}
+				// Creating interval to find footer
+				const intervalFooter = setInterval(() => {
+					const checkFooter = document.querySelector(".ec-footer");
+					console.log("check footer: ", checkFooter);
+					if (checkFooter) {
+						// if footer exists
+						if (localStorage.getItem("show_widget") === "true") {
+							// and show widget is true, mounting WidgetElement above footer
+							const container = document.createElement("div");
+							checkFooter.parentNode?.insertBefore(container, checkFooter);
+
+							const app = createApp(ProductsWidget);
+							app.mount(container);
+						}
+						// stopping interval when footer is found and custom widget is loaded
+						clearInterval(intervalFooter);
+					}
+				}, 1000);
 			}
 		});
 	};
