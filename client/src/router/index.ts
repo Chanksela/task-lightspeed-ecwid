@@ -10,7 +10,18 @@ const router = createRouter({
 			name: "home",
 			component: HomeView,
 		},
-		{ path: "/store/:pathMatch(.*)*", name: "store", component: EcwidStore },
+		{
+			path: "/store/:pathMatch(.*)*",
+			name: "store",
+			component: EcwidStore,
+			beforeEnter(to, from, next) {
+				if (from.name !== "store" && window.location.pathname !== to.path) {
+					window.location.href = to.fullPath;
+				} else {
+					next();
+				}
+			},
+		},
 		{
 			path: "/settings",
 			name: "settings",
