@@ -74,8 +74,11 @@
 <script setup lang="ts">
 	import { onMounted, ref, watch } from "vue";
 	import type { ExportableProductList, Product } from "@/shared/types";
+	import { fetchProducts } from "@/utils/fetchProducts";
 	const getShowValue = localStorage.getItem("show_widget");
-	const numberOfProducts = ref(localStorage.getItem("number_of_products") || 5);
+	const numberOfProducts = ref(
+		localStorage.getItem("number_of_products") || "5"
+	);
 	const selectedProducts = ref<ExportableProductList[]>([]);
 	const products = ref<Product[]>([]);
 	const showWidget = ref(
@@ -99,29 +102,21 @@
 		}
 		console.log(selectedProducts.value);
 	}
-	function fetchProducts() {
-		fetch(
-			`https://app.ecwid.com/api/v3/101560752/products?limit=${numberOfProducts.value}&sortBy=UPDATED_TIME_DESC`,
-			{
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer public_eaBDuVmrse1hKZun4qaPF3LewugrnEgq",
-				},
-			}
-		)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				products.value = data.items;
-			});
+	async function loadProducts() {
+		try {
+			const fetchedProducts = await fetchProducts(numberOfProducts.value);
+			products.value = fetchedProducts;
+		} catch (error) {
+			console.error("Failed to fetch products:", error);
+		}
 	}
+
 	watch(numberOfProducts, () => {
 		localStorage.setItem(
 			"number_of_products",
 			numberOfProducts.value.toString()
 		);
-		fetchProducts();
+		loadProducts();
 	});
 	onMounted(() => {
 		if (
@@ -130,6 +125,6 @@
 		) {
 			localStorage.setItem("number_of_products", "5");
 		}
-		fetchProducts();
+		loadProducts();
 	});
 </script>

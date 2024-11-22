@@ -7,28 +7,21 @@
 	import { onMounted, ref } from "vue";
 	import Product from "./Product.vue";
 	let products = ref([]);
+	let numberOfProducts = ref(
+		localStorage.getItem("number_of_products").toString() || 5
+	);
+	import { fetchProducts } from "@/utils/fetchProducts";
 
-	function fetchProducts() {
-		fetch(
-			"https://app.ecwid.com/api/v3/101560752/products?limit=10&sortBy=UPDATED_TIME_DESC",
-			{
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer public_eaBDuVmrse1hKZun4qaPF3LewugrnEgq",
-				},
-			}
-		)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				console.log(data);
-				products.value = data.items;
-				console.log("test", products);
-			});
+	async function fetchAndSetProducts() {
+		try {
+			products.value = await fetchProducts(numberOfProducts.value);
+		} catch (error) {
+			console.log(error);
+		}
 	}
+
 	onMounted(() => {
-		fetchProducts();
+		fetchAndSetProducts();
 	});
 </script>
 <style scoped>
