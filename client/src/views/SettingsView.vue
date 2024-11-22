@@ -80,37 +80,47 @@
 	import { onMounted, ref, watch } from "vue";
 	import type { ExportableProductList, Product } from "@/shared/types";
 	import { fetchProducts } from "@/utils/fetchProducts";
+
 	const getShowValue = localStorage.getItem("show_widget");
+	const showWidget = ref(
+		!getShowValue || getShowValue === "true" ? true : false
+	);
+
+	const products = ref<Product[]>([]);
 	const numberOfProducts = ref(
 		localStorage.getItem("number_of_products") || "5"
 	);
 	const selectedProducts = ref<ExportableProductList[]>([]);
-	const products = ref<Product[]>([]);
-	const showWidget = ref(
-		!getShowValue || getShowValue === "true" ? true : false
-	);
+
 	const handelExport = async () => {
-		const response = await fetch("http://localhost:3000/api/export", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ exportableProducts: selectedProducts.value }),
-		});
-		if (response.ok) {
-			const data = await response.json();
-			console.log(data);
+		if (selectedProducts.value.length > 0) {
+			const response = await fetch("http://localhost:3000/api/export", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ exportableProducts: selectedProducts.value }),
+			});
+			if (response.ok) {
+				const data = await response.json();
+				console.log(data);
+			} else {
+				console.error("Error: ", response.statusText);
+			}
 		} else {
-			console.error("Error: ", response.statusText);
+			alert("Please select products before trying to download...");
 		}
 	};
+
 	const productIsChecked = (product: Product) => {
 		return selectedProducts.value.some((p) => p.id === product.id);
 	};
+
 	const handleWidgetToggle = () => {
 		localStorage.setItem("show_widget", showWidget.value.toString());
 		console.log("toggled");
 	};
+
 	function handleCheckbox(product: Product) {
 		const existingProductIndex = selectedProducts.value.findIndex(
 			(p) => p.id === product.id
@@ -122,6 +132,7 @@
 		}
 		console.log(selectedProducts.value);
 	}
+
 	async function loadProducts() {
 		try {
 			const fetchedProducts = await fetchProducts(numberOfProducts.value);
