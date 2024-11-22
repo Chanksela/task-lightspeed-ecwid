@@ -7,7 +7,6 @@
 		</div>
 	</main>
 </template>
-
 <style scoped>
 	.hero {
 		max-width: 600px;

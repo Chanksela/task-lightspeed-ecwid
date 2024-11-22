@@ -1,6 +1,6 @@
 <template>
 	<div class="grid-product__wrap">
-		<Product v-for="product in products" :product="product" />
+		<Product v-for="product in products" :product="product" :key="product.id" />
 	</div>
 </template>
 <script setup>

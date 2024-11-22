@@ -18,7 +18,9 @@
 		};
 	}>();
 	function addToCart() {
-		Ecwid.Cart.addProduct({ id: props.product.id });
+		Ecwid.OnAPILoaded.add(function () {
+			Ecwid.Cart.addProduct(props.product.id);
+		});
 	}
 </script>
 <style scoped>
