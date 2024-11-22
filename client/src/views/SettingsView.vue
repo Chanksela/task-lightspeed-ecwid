@@ -69,6 +69,11 @@
 				<h4>{{ product.name }}</h4>
 			</div>
 		</div>
+		<div>
+			<button @click="handelExport" class="btn btn-medium btn-default">
+				Download as CSV
+			</button>
+		</div>
 	</div>
 </template>
 <script setup lang="ts">
@@ -84,6 +89,21 @@
 	const showWidget = ref(
 		!getShowValue || getShowValue === "true" ? true : false
 	);
+	const handelExport = async () => {
+		const response = await fetch("http://localhost:3000/api/export", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ exportableProducts: selectedProducts.value }),
+		});
+		if (response.ok) {
+			const data = await response.json();
+			console.log(data);
+		} else {
+			console.error("Error: ", response.statusText);
+		}
+	};
 	const productIsChecked = (product: Product) => {
 		return selectedProducts.value.some((p) => p.id === product.id);
 	};
