@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import { createApp, onMounted } from "vue";
+	//@ts-ignore
 	import ProductsWidget from "./ProductsWidget.vue";
 	const props = defineProps({
 		storeId: {
@@ -7,6 +8,7 @@
 			default: 101560752,
 		},
 	});
+
 	const injectEcwidScript = (storeId: number) => {
 		window.ec = window.ec || {};
 		window.ec.config = window.ec.config || {};
@@ -55,7 +57,7 @@
 							// stopping interval when footer is found and custom widget is loaded
 							clearInterval(intervalFooter);
 						}
-					}, 1000);
+					}, 500);
 				}
 			});
 		});

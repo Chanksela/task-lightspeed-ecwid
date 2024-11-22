@@ -6,11 +6,12 @@
 <script setup>
 	import { onMounted, ref } from "vue";
 	import Product from "./Product.vue";
+	import { fetchProducts } from "@/utils/fetchProducts";
+
 	let products = ref([]);
 	let numberOfProducts = ref(
 		localStorage.getItem("number_of_products").toString() || 5
 	);
-	import { fetchProducts } from "@/utils/fetchProducts";
 
 	async function fetchAndSetProducts() {
 		try {

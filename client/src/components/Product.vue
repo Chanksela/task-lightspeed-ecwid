@@ -18,9 +18,32 @@
 		};
 	}>();
 	function addToCart() {
-		Ecwid.OnAPILoaded.add(function () {
-			Ecwid.Cart.addProduct(props.product.id);
-		});
+		console.log("ID", props.product.id);
+		console.log("quantity", props.product.id);
+		console.log("options", props.product.id);
+		console.log("selectedPrice", props.product.id);
+		console.log("recurringChargeSettings", props.product.id);
+
+		Ecwid.Cart.addProduct(
+			props.product.id,
+			(
+				success: boolean,
+				product: typeof props.product,
+				cart: any,
+				error: string
+			) => {
+				if (success) {
+					console.log("Product added", product);
+					console.log("Renewed Cart", cart);
+				} else {
+					console.log(error);
+				}
+			}
+		);
+		// Ecwid.OnAPILoaded.add(function () {
+		// 	Ecwid.OnPageLoaded.add(function () {
+		// 	});
+		// });
 	}
 </script>
 <style scoped>

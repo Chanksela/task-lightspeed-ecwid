@@ -94,18 +94,34 @@
 
 	const handelExport = async () => {
 		if (selectedProducts.value.length > 0) {
-			const response = await fetch("http://localhost:3000/api/export", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ exportableProducts: selectedProducts.value }),
-			});
-			if (response.ok) {
-				const data = await response.json();
-				console.log(data);
-			} else {
-				console.error("Error: ", response.statusText);
+			try {
+				const response = await fetch("http://localhost:3000/api/export", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ exportableProducts: selectedProducts.value }),
+				});
+
+				if (response.ok) {
+					// Process the response as a Blob
+					const blob = await response.blob();
+					const url = window.URL.createObjectURL(blob);
+
+					// Create a temporary link to download the file
+					const link = document.createElement("a");
+					link.href = url;
+					link.download = "products.csv"; // Set the filename
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+					window.URL.revokeObjectURL(url); // Clean up the object URL
+				} else {
+					console.error("Error: ", response.statusText);
+					alert("Failed to export. Please try again.");
+				}
+			} catch (error) {
+				console.error("Error while exporting: ", error);
 			}
 		} else {
 			alert("Please select products before trying to download...");
