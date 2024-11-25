@@ -56,17 +56,31 @@
 		<div>
 			<input type="number" v-model="numberOfProducts" min="1" />
 		</div>
-		<div class="products-container">
-			<div v-for="product in products" :key="product.id">
-				<input
-					:checked="productIsChecked(product)"
-					type="checkbox"
-					:name="product.name"
-					:id="product.id.toString()"
-					@change="handleCheckbox(product)"
-				/>
-				<img :src="product.thumbnailUrl" :alt="product.name" height="200px" />
-				<h4>{{ product.name }}</h4>
+		<div class="grid-product__wrap">
+			<div
+				v-for="product in products"
+				:key="product.id"
+				class="a-card product-card"
+			>
+				<div class="product-info__wrap">
+					<div>
+						<input
+							:checked="productIsChecked(product)"
+							type="checkbox"
+							:name="product.name"
+							:id="product.id.toString()"
+							@change="handleCheckbox(product)"
+						/>
+					</div>
+					<div>
+						<img
+							:src="product.thumbnailUrl"
+							:alt="product.name"
+							height="200px"
+						/>
+						<h4>{{ product.name }}</h4>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div>
@@ -151,7 +165,10 @@
 
 	async function loadProducts() {
 		try {
-			const fetchedProducts = await fetchProducts(numberOfProducts.value);
+			const fetchedProducts = await fetchProducts(
+				numberOfProducts.value,
+				"UPDATED_TIME_DESC"
+			);
 			products.value = fetchedProducts;
 		} catch (error) {
 			console.error("Failed to fetch products:", error);
@@ -175,3 +192,15 @@
 		loadProducts();
 	});
 </script>
+<style scoped>
+	.grid-product__wrap {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: 20px;
+		margin-top: 20px;
+	}
+	.product-info__wrap {
+		display: flex;
+		text-align: center;
+	}
+</style>
